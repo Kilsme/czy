@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${post.title}">文章标题</title>
+</head>
+<body>
+<h1 th:text="${post.title}">文章标题</h1>
+<p th:text="${post.content}">文章内容</p>
+<img th:src="${imageUrl}" alt="文章配图" />
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员页面</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>用户名</th>
+        <th>密码</th>
+        <th>是否被禁用</th>
+    </tr>
+    <tr th:each="user : ${UserList}">
+        <td th:text="${user.getUserName()}"></td>
+        <td th:text="${user.getPassword()}"></td>
+        <td th:text="${user.getBlockId()} == 1 ? '禁用' : '正常使用'">状态</td>
+        <td>
+            <!-- 如果被禁用（blockId == 1），显示【启用】按钮 -->
+            <a th:if="${user.getBlockId()} == 1" th:href="@{/changeBlock(id=${user.id})}">启用</a>
+            <!-- 如果未被禁用（blockId != 1），显示【禁用】按钮 -->
+            <a th:if="${user.getBlockId()} != 1" th:href="@{/changeBlock(id=${user.id})}">禁用</a>
+        </td>
+    </tr>
+</table>
+<div class="pagination">
+    <!-- 上一页按钮：只有当前页 > 1 时才显示 -->
+    <a th:if="${nowPage} > 1" th:href="@{/adminView(page=${nowPage} - 1)}" th:text="'«'">«</a>
+
+    <!-- 页码列表 -->
+    <span th:each="page : ${pagesList}">
+        <a th:href="@{/adminView(page=${page})}"
+           th:text="${page}"
+           th:class="${page == nowPage} ? 'active' : ''">1</a>
+    </span>
+    <!-- 下一页按钮：只有当前页 < 总页数 时才显示 -->
+    <a th:if="${nowPage} < ${pagesList.size()}"
+       th:href="@{/adminView(page=${nowPage} + 1)}"
+       th:text="'»'">»</a>
+    <a th:href="@{/registerApplicationView}">查看申请列表</a>
+</div>
+
+<a th:href="@{/loginPostView}">更新登陆页面的图片</a>
+</body>
+</html>

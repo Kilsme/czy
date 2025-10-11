@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table th:each="post : ${postList}">
+ <img th:src="${post.getImageUrl()}"></img>
+ <div th:text="${post.getTitle()}"></div>
+ <div th:text="${post.getContent()}"></div>
+ <div th:text="${post.getCreatedAt()}"></div>
+</table>
+<a th:href="@{/userView}">返回</a>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>上传图片到七牛云</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin: 15px 0; }
+        img { max-width: 300px; margin-top: 10px; border: 1px solid #ddd; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+<h2>登陆页面的上传照片</h2>
+
+<form method="post" action="/loginUpload" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>选择图片：</label>
+        <input type="file" name="image" id="image" accept="image/*" required>
+    </div>
+    <button type="submit">提交上传</button>
+</form>
+
+<!-- 显示错误或成功信息 -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
+<div th:if="${success}" class="success">上传成功！</div>
+<img th:if="${loginUrl}" th:src="${loginUrl}" alt="上传的图片">
+<a th:href="@{adminView}">返回</a>
+</body>
+</html>

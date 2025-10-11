@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>上传图片到七牛云</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin: 15px 0; }
+        img { max-width: 300px; margin-top: 10px; border: 1px solid #ddd; }
+        .error { color: red; }
+        .success { color: green; }
+        .btn {
+            margin: 5px;
+            padding: 8px 12px;
+            text-decoration: none;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .btn:hover { background: #0056b3; }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h2>上传图片到七牛云</h2>
+
+<form method="post" action="/upload" enctype="multipart/form-data" id="uploadForm">
+    <div class="form-group">
+        <label>选择图片：</label>
+        <input type="file" name="image" id="image" accept="image/*" required>
+    </div>
+
+    <div class="form-group">
+        <label>标题：</label>
+        <input type="text" name="title" id="title" style="width: 300px;">
+    </div>
+
+    <div class="form-group">
+        <label>内容：</label>
+        <textarea name="content" id="content" rows="6" style="width: 300px;"></textarea>
+    </div>
+
+    <!-- AI 提取按钮（超链接形式） -->
+    <a href="ai-extract" class="btn" id="aiExtractBtn">✨ AI 自动提取</a>
+
+    <button type="submit">提交上传</button>
+</form>
+
+<!-- 显示结果 -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
+<div th:if="${success}" class="success">上传成功！</div>
+<img th:if="${imageUrl}" th:src="${imageUrl}" alt="上传的图片">
+<a th:href="@{/userView}" class="btn">返回</a>
+
+<script>
+    $(document).ready(function () {
+        $('#aiExtractBtn').click(function (e) {
+            e.preventDefault(); // 阻止默认跳转
+
+            const content = $('#content').val();
+            if (!content.trim()) {
+                alert("请先输入内容，才能使用 AI 提取！");
+                return;
+            }
+
+            // 发送内容到后端 AI 接口
+            $.ajax({
+                url: '/ai-extract',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ content: content }),
+                success: function (response) {
+                    if (response.success) {
+                        // 填充标题和内容
+                        $('#title').val(response.title);
+                        $('#content').val(response.content);
+                        alert("✅ AI 提取成功！");
+                    } else {
+                        alert("❌ " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("❌ 请求失败，请检查网络或服务是否运行中。");
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

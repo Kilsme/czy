@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>平台登录 - 简洁高效的用户体验</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4c85f2',
+                        secondary: '#3a6ecc',
+                        neutral: '#f0f2f5',
+                        dark: '#333',
+                        light: '#f9fafb',
+                        error: '#e74c3c'
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .backdrop-blur {
+                backdrop-filter: blur(8px);
+            }
+            .shadow-soft {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            }
+            .shadow-hover {
+                box-shadow: 0 15px 35px rgba(76, 133, 242, 0.15);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+    </style>
+    <style>
+        /* 背景渐变效果 */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e6ebf1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 动态背景模糊效果 */
+        .bg-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            object-fit: cover;
+            filter: blur(12px) brightness(0.7);
+        }
+
+        /* 装饰元素 */
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .circle-1 {
+            width: 400px;
+            height: 400px;
+            background-color: #4c85f2;
+            top: -200px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            background-color: #3a6ecc;
+            bottom: -150px;
+            left: -50px;
+        }
+
+        /* 输入框聚焦动画 */
+        .input-focus {
+            @apply border-primary ring-2 ring-primary/20;
+        }
+    </style>
+</head>
+<body>
+<!-- 动态背景图 -->
+<img th:if="${loginUrl}" th:src="${loginUrl}" alt="背景图" class="bg-blur" />
+
+<!-- 装饰圆形元素 -->
+<div class="decorative-circle circle-1"></div>
+<div class="decorative-circle circle-2"></div>
+
+<div class="login-container max-w-md w-full mx-4 bg-white/95 backdrop-blur rounded-2xl shadow-soft p-8 transition-custom hover:shadow-hover hover:-translate-y-1">
+    <div class="mb-8 text-center">
+        <h1 class="text-[clamp(1.8rem,4vw,2.2rem)] font-bold text-dark mb-2">
+            <i class="fa fa-sign-in mr-2 text-primary"></i>欢迎登录
+        </h1>
+        <p class="text-gray-500 text-sm">请输入账号密码访问您的账户</p>
+    </div>
+
+    <form action="PersonChoose" method="post" class="space-y-6">
+        <div class="form-group">
+            <label for="username" class="block text-gray-700 mb-2 text-sm font-medium flex items-center">
+                <i class="fa fa-user-o mr-2 text-gray-400"></i>
+                用户名
+            </label>
+            <div class="relative">
+                <input type="text" id="username" name="username" placeholder="请输入用户名"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:input-focus transition-custom"
+                       required />
+                <i class="fa fa-check-circle text-green-500 absolute right-3 top-1/2 -translate-y-1/2 scale-0 transition-transform duration-300"></i>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="block text-gray-700 mb-2 text-sm font-medium flex items-center">
+                <i class="fa fa-lock mr-2 text-gray-400"></i>
+                密码
+            </label>
+            <div class="relative">
+                <input type="password" id="password" name="password" placeholder="请输入密码"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:input-focus transition-custom"
+                       required />
+                <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors duration-200">
+                    <i class="fa fa-eye-slash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 错误提示 -->
+        <div th:if="${noPerson}" class="error bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center">
+            <i class="fa fa-exclamation-circle mr-2"></i>
+            <span>用户名或者密码错误</span>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn w-full py-3 px-6 bg-primary text-white font-semibold rounded-lg text-lg shadow-md shadow-primary/20 hover:bg-secondary hover:shadow-lg hover:shadow-primary/30 transition-custom flex items-center justify-center">
+            <span>登 录</span>
+            <div class="loader ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin hidden"></div>
+        </button>
+    </form>
+
+    <div class="register-link mt-6 text-sm text-gray-500 flex flex-col items-center">
+        <span>还没有账号？</span>
+        <a th:href="@{/registerView}" class="text-primary hover:text-secondary font-medium mt-1 flex items-center transition-colors duration-200">
+            <span>立即注册</span>
+            <i class="fa fa-arrow-right ml-1 text-xs"></i>
+        </a>
+    </div>
+</div>
+
+<script>
+    // 密码显示/隐藏功能
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+
+        // 切换图标
+        const icon = this.querySelector('i');
+        if(icon.classList.contains('fa-eye-slash')) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        } else {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    });
+
+    // 表单提交加载动画
+    const loginBtn = document.getElementById('loginBtn');
+    const loader = loginBtn.querySelector('.loader');
+
+    loginBtn.addEventListener('click', function() {
+        this.disabled = true;
+        this.querySelector('span').style.display = 'none';
+        loader.style.display = 'inline-block';
+
+        // 模拟加载延迟
+        setTimeout(() => {
+            // 这里可以添加实际的表单提交逻辑
+            this.disabled = false;
+            this.querySelector('span').style.display = 'inline-block';
+            loader.style.display = 'none';
+        }, 1500);
+    });
+
+    // 简单的表单验证反馈
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+
+    usernameInput.addEventListener('blur', function() {
+        const checkIcon = this.nextElementSibling.querySelector('i');
+        if(this.value.trim() !== '') {
+            checkIcon.classList.remove('scale-0');
+            checkIcon.classList.add('scale-100');
+        } else {
+            checkIcon.classList.add('scale-0');
+            checkIcon.classList.remove('scale-100');
+        }
+    });
+
+    passwordInput.addEventListener('blur', function() {
+        const checkIcon = this.nextElementSibling.querySelector('i');
+        if(this.value.trim() !== '') {
+            checkIcon.classList.remove('scale-0');
+            checkIcon.classList.add('scale-100');
+        } else {
+            checkIcon.classList.add('scale-0');
+            checkIcon.classList.remove('scale-100');
+        }
+    });
+</script>
+</body>
+</html>

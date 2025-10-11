@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户页面</title>
+    <style>
+        .post {
+            border: 1px solid #ddd;
+            margin: 15px;
+            padding: 15px;
+            max-width: 600px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            word-wrap: break-word;
+        }
+        .post h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .post p {
+            color: #555;
+            line-height: 1.5;
+        }
+        .post img {
+            max-width: 100%;
+            max-height: 400px;
+            height: auto;
+            margin: 10px 0;
+            border-radius: 6px;
+            object-fit: contain;
+            display: block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+<!-- 每个帖子用 div 包裹 -->
+<div th:each="PostVo : ${PostVoList}" class="post">
+    <h3 th:text="${PostVo.getTitle()}"></h3>
+    <p th:text="${PostVo.getContent()}"></p>
+    <div th:text="${PostVo.getCreatedAt()}">发帖时间</div>
+    <img th:if="${PostVo.getImageUrl()}" th:src="${PostVo.getImageUrl()}" alt="Post Image">
+    <div th:text="${PostVo.getLikes()}">点赞数</div>
+    <div th:text="${PostVo.getFavorites()}">收藏数</div>
+    <a th:if="${PostVo.getLikes()==0}" th:href="@{/giveLike(postId=${PostVo.getId()},userId=${PostVo.getUserId()})}">点赞</a>
+    <a th:if="${PostVo.getLikes()!=0}" th:href="@{/UnLike(postId=${PostVo.getId()},userId=${PostVo.getUserId()})}">取消点赞</a>
+    <a th:if="${PostVo.getFavorites()==0}" th:href="@{/favorite(postId=${PostVo.getId()},userId=${PostVo.getUserId()})}">收藏</a>
+    <a th:if="${PostVo.getFavorites()!=0}" th:href="@{/RemoveFavorite(postId=${PostVo.getId()},userId=${PostVo.getUserId()})}">取消收藏</a>
+</div>
+<a th:href="@{/uploadPostView}">上传图片</a> |
+<a th:href="@{/userFavoriteView(userId=${userId})}">查看我的收藏</a>
+<a th:href="@{/PostListViewByUser}">查看我的帖子</a>
+</body>
+</html>
