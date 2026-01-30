@@ -7,5 +7,6 @@ public class PostFavorites {
     private int  id;
     private int PostId;
     private int UserId;
+
     private String  CreatedAt;
 }

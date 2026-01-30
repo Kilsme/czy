@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
-
 public interface RegisterDao {
     @Insert("INSERT INTO register (user_name, name, status, password, email, create_time) " +
             "VALUES (#{UserName}, #{Name}, #{status}, #{password}, #{email}, NOW())")

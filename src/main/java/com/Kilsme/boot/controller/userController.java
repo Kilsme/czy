@@ -82,7 +82,6 @@ public class userController {
   @GetMapping("userFavoriteView")
   public String userFavoriteView(int userId,Model model){
       List<Post> postList = postService.selectPostByUserId(userId);
-
       model.addAttribute("postList",postList);
       return "userFavorite";
   }

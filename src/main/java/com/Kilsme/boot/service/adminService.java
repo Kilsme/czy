@@ -21,6 +21,7 @@ public class adminService {
     @Resource
     private AdminDao adminDao;
     public int GetUserAllNum(){
+
         return userDao.getAllNum();
     }
     public List<Register> getNowNoRegisterApplication(){

@@ -19,25 +19,20 @@ public class UploadService {
 
     @Value("${qiniu.ak}")
     private String accessKey;
-
     @Value("${qiniu.sk}")
     private String secretKey;
 
     @Value("${qiniu.bucket}")
     private String bucket;
-
     @Value("${qiniu.domain}")
     private String domain;
-
     private UploadManager uploadManager;
-
     @PostConstruct
     public void init() {
         Configuration cfg = new Configuration(Region.huanan()); // 根据你的 bucket 区域修改
         cfg.resumableUploadAPIVersion = Configuration.ResumableUploadAPIVersion.V2;
         uploadManager = new UploadManager(cfg);
     }
-
     public String upload(InputStream in, String filename) {
         try {
             // 生成唯一文件名：时间戳 + 后缀
